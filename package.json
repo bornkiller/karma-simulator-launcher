@@ -1,0 +1,25 @@
+{
+  "name": "karma-simulator-launcher",
+  "version": "0.1.0",
+  "description": "A Karma plugin. Launcher for Remote WebDriver instances.(Appium with simulator)",
+  "author": "bornkiller <hjj491229492@hotmail.com>",
+  "contributors": [],
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:bornkiller/karma-simulator-launcher.git"
+  },
+  "keywords": [
+    "karma-plugin",
+    "launcher",
+    "WebDriver",
+    "Appium",
+    "Simulator"
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT"
+}
