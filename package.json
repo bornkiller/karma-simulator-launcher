@@ -16,7 +16,11 @@
     "Appium",
     "Simulator"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "ios-sim": "^3.1.1",
+    "underscore": "^1.8.3",
+    "wd": "^0.3.12"
+  },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

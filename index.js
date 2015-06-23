@@ -1,83 +1,44 @@
 var wd = require('wd');
+var _ = require('underscore');
 var urlparse = require('url').parse;
 var urlformat = require('url').format;
 
-var WebDriverInstance = function (baseBrowserDecorator, args, logger) {
+var SimulatorInstance = function (baseBrowserDecorator, args, logger) {
   var log = logger.create('WebDriver');
 
   var config = args.config || {
     hostname: '127.0.0.1',
-    port: 4444
+    port: 4723
   };
   var self = this;
 
-  // Intialize with default values
+  // Initialize with default values
   var spec = {
-    platform: 'ANY',
-    testName: 'Karma test',
-    tags: [],
-    version: ''
+    platformName: 'iOS',
+    platformVersion: '8.1',
+    browserName: 'Safari',
+    deviceName: 'iPhone Simulator',
+    testName: 'Karma WebDriver Simulator'
   };
 
-  Object.keys(args).forEach(function (key) {
-    var value = args[key];
-    switch (key) {
-    case 'browserName':
-      break;
-    case 'platform':
-      break;
-    case 'testName':
-      break;
-    case 'tags':
-      break;
-    case 'version':
-      break;
-    case 'config':
-      // ignore
-      return;
-    }
-    spec[key] = value;
-  });
+  spec = _.extend(spec, _.omit(args, 'config'));
 
   if (!spec.browserName) {
-    throw new Error('browserName is required!');
+    throw new Error('WebDriver Simulator BrowserName Required!');
   }
 
   baseBrowserDecorator(this);
 
-  this.name = spec.browserName + ' via Remote WebDriver';
-
-  // Handle x-ua-compatible option same as karma-ie-launcher(copy&paste):
-  //
-  // Usage :
-  //   customLaunchers: {
-  //     IE9: {
-  //       base: 'WebDriver',
-  //       config: webdriverConfig,
-  //       browserName: 'internet explorer',
-  //       'x-ua-compatible': 'IE=EmulateIE9'
-  //     }
-  //   }
-  //
-  // This is done by passing the option on the url, in response the Karma server will
-  // set the following meta in the page.
-  //   <meta http-equiv="X-UA-Compatible" content="[VALUE]"/>
-  function handleXUaCompatible(args, urlObj) {
-    if (args['x-ua-compatible']) {
-      urlObj.query['x-ua-compatible'] = args['x-ua-compatible'];
-    }
-  }
+  this.name = spec.browserName + ' via Remote WebDriver Simulator';
 
   this._start = function (url) {
     var urlObj = urlparse(url, true);
 
-    handleXUaCompatible(spec, urlObj);
-
     delete urlObj.search; //url.format does not want search attribute
     url = urlformat(urlObj);
 
-    log.debug('WebDriver config: ' + JSON.stringify(config));
-    log.debug('Browser capabilities: ' + JSON.stringify(spec));
+    log.debug('WebDriver Simulator config: ' + JSON.stringify(config));
+    log.debug('Simulator Browser capabilities: ' + JSON.stringify(spec));
 
     self.browser = wd.remote(config, 'promiseChain').init(spec);
 
@@ -86,9 +47,7 @@ var WebDriverInstance = function (baseBrowserDecorator, args, logger) {
       self.browser.title();
     }, args.pseudoActivityInterval);
 
-    self.browser
-        .get(url)
-        .done();
+    self.browser.get(url).done();
 
     self._process = {
       kill: function() {
@@ -105,8 +64,8 @@ var WebDriverInstance = function (baseBrowserDecorator, args, logger) {
   this._onKillTimeout = function(){};
 };
 
-WebDriverInstance.prototype = {
-  name: 'WebDriver',
+SimulatorInstance.prototype = {
+  name: 'Simulator',
 
   DEFAULT_CMD: {
     linux: require('wd').path,
@@ -116,9 +75,9 @@ WebDriverInstance.prototype = {
   ENV_CMD: 'WEBDRIVER_BIN'
 };
 
-WebDriverInstance.$inject = ['baseBrowserDecorator', 'args', 'logger'];
+SimulatorInstance.$inject = ['baseBrowserDecorator', 'args', 'logger'];
 
 // PUBLISH DI MODULE
 module.exports = {
-  'launcher:WebDriver': ['type', WebDriverInstance]
+  'launcher:Simulator': ['type', SimulatorInstance]
 };
